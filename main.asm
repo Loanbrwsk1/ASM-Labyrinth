@@ -51,6 +51,7 @@ _start:
   je .right ; si la lettre est d on part à droite
   cmp [action], 97
   je .quit ; si la lettre est a on quitte
+  jmp .game ; si la lettre n'est pas reconnu on retourne à .game
 
 .top:; comparer au caractère à l'adresse actuelle - 16 ; # : 35 ; . : 46 ; S : 83 ; @ : 64
   cmp byte [r10 - 16], 35 ; compare le caractère au dessus (soit 16 emplacements mémoire avant) avec 35, caractère du #
@@ -61,16 +62,28 @@ _start:
   jmp .print_map
 
 .left:
-  cmp r15, 42
-  jne .game
+  cmp byte [r10 - 1], 35 ; compare le caractère au dessus (soit 16 emplacements mémoire avant) avec 35, caractère du #
+  je .print_map
+  mov byte [r10 - 1], 64 ; si ce n'est pas un #, on met un arobase à la nouvelle position du joueur
+  mov byte [r10], 46 ; et on met un point à la position du joueur
+  lea r10, [r10 - 1] ; on met à jour la position du joueur dans le registre
+  jmp .print_map
 
 .down:
-  cmp r15, 42
-  jne .game
+  cmp byte [r10 + 16], 35 ; compare le caractère au dessus (soit 16 emplacements mémoire avant) avec 35, caractère du #
+  je .print_map
+  mov byte [r10 + 16], 64 ; si ce n'est pas un #, on met un arobase à la nouvelle position du joueur
+  mov byte [r10], 46 ; et on met un point à la position du joueur
+  lea r10, [r10 + 16] ; on met à jour la position du joueur dans le registre
+  jmp .print_map
 
 .right:
-  cmp r15, 42
-  jne .game
+  cmp byte [r10 + 1], 35 ; compare le caractère au dessus (soit 16 emplacements mémoire avant) avec 35, caractère du #
+  je .print_map
+  mov byte [r10 + 1], 64 ; si ce n'est pas un #, on met un arobase à la nouvelle position du joueur
+  mov byte [r10], 46 ; et on met un point à la position du joueur
+  lea r10, [r10 + 1] ; on met à jour la position du joueur dans le registre
+  jmp .print_map
 
 .quit:
   jmp .end
